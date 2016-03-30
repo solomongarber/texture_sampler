@@ -11,6 +11,6 @@ def control(pic, flow):
     lr=(flow[:,:,1].reshape(-1)+xs)%pic.shape[1]
     ans=np.zeros(pic.shape)
     ans[ys,xs,:]=pic[ud,lr,:]
-    for i in range(3):
-        ans[:,:,i]*=np.int32(np.sum(flow,2)>0)
+    #for i in range(3):
+    #    ans[:,:,i]*=np.int32(np.sum(flow,2)>0)
     return ans

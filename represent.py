@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 def rep_cols(im,cols,split):
     ans=np.zeros((im.shape[0],im.shape[1],3),dtype=np.uint8)
     pos=im*np.int32(im>split)-split
@@ -14,6 +15,15 @@ def rep_cols(im,cols,split):
     neg[:,:]=neg[:,:]*cols[1]
     #middle=neg_cap*bias
     ans[:,:,:]=np.uint8(pos+neg)
+    cv2.imshow('ans',ans)
+    return ans
+
+def rep_bw(im):
+    ans=np.zeros((im.shape[0],im.shape[1]),dtype=np.uint8)
+    temp=np.zeros(im.shape)
+    temp[:,:]=im+np.min(im)
+    temp[:,:]=temp*np.max(temp)
+    ans[:,:]=np.uint8(temp*255)
     cv2.imshow('ans',ans)
     return ans
 
