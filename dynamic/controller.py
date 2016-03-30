@@ -1,5 +1,7 @@
 import numpy as np
 
+"""Given an input image and a sparse flow field, moves pixels specified
+in the flow field and leaves other pixels unchanged (working solution)"""
 def control(pic, flow):
     #lr=flow[:,:,0].reshape(-1)
     #ud=flow[:,:,1].reshape(-1)
