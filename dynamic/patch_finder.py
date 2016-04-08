@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import scipy
 class hooder:
     def __init__(self,sample,support,lamb,ctrl):
         self.sample=sample
@@ -28,4 +29,16 @@ class hooder:
             if mask[y_off,x_off]:
                 energies+=lost_energy*(np.square(window[:,:]-self.ctrl[y_off,x_off,:]))
         return np.argmin(np.sum(energies,2))
-        
+
+    def find(self,patch):
+        energies=np.zeros((self.winy,self.winx,3))
+        window=np.zeros(self.win_shape)
+        for ind in range(self.support*self.support):
+            x_off=ind%self.support
+            x_end=x_off+self.winx
+            y_off=ind/self.support
+            y_end=y_off+self.winy
+            window[:,:,:]=self.sample[y_off:y_end,x_off:x_end,:]
+            energies+=np.square(window[:,:]-patch[y_off,x_off,:])
+            #energies/=scipy.ndimage.uniform_filter(self.sample,size=self.support)[:self.winy,:self.winx,:]
+        return np.argmin(np.sum(energies,2))

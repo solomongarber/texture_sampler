@@ -152,10 +152,11 @@ class picturer:
             y_off=self.steps[self.lev]*(meta_y)
             #ans[x_off:x_off+support,y_off:y_off+support,:]+=block
             #block2=self.ctrl[x_off:x_off+support,y_off:y_off+support,:]*lamda
-            block2=self.get_block_off(x_off,y_off,self.ctrl)*lamda
+            #block2=self.get_block_off(x_off,y_off,self.ctrl)*lamda
 
-            ans=self.modify_mat(ans,x_off,y_off,support,block+block2)
-            wtplier=self.modify_mat(wtplier,x_off,y_off,support,lamda*np.int32(block2>0))
+            #ans=self.modify_mat(ans,x_off,y_off,support,block+block2)
+            ans=self.modify_mat(ans,x_off,y_off,support,block)
+            #wtplier=self.modify_mat(wtplier,x_off,y_off,support,lamda*np.int32(block2>0))
             #ans[x_off:x_off+support,y_off:y_off+support,:]+=block+block2
             #wtplier[x_off:x_off+support,y_off:y_off+support,:]+=lamda*np.int32(block2>0)
         wtplier[wtplier==0]=1
@@ -186,7 +187,8 @@ class picturer:
                 mask_patch=self.get_block_off(x_off,y_off,self.ctrl)
                 
                 mask_patch=mask_patch[:,:,0]
-                ind=self.finders[self.lev].query(patch,mask_patch)
+                #ind=self.finders[self.lev].query(patch,mask_patch)
+                ind=self.finders[self.lev].find(patch)
                 if self.inds[self.lev][meta_y,meta_x]!=ind:
                     new_map[meta_y,meta_x]=1
                     self.inds[self.lev][meta_y,meta_x]=ind
@@ -210,6 +212,7 @@ class picturer:
         print np.max(self.ctrl)
         cv2.imshow('ctrl',np.uint8(self.ctrl))
         self.ctrl=controller.control(self.im,self.flow)
+        self.im=controller.control(self.im,self.flow)
         self.finders=[]
         for support in self.supports:
             h=patch_finder.hooder(self.sample,support,self.lamb_m,self.ctrl)
