@@ -49,8 +49,8 @@ class picturer:
         self.flow[:,:]=flow
 
         #conrolled pixels to match
-        self.ctrl=controller.control(im,flow)
-
+        self.ctrl=controller.interp(im,flow)
+        #self.ctrl=controller.control(im,flow)
         #logical indices of control pixels
         self.mask=np.sum(self.ctrl,2)>0
 
@@ -211,8 +211,10 @@ class picturer:
     def update_controls(self):
         print np.max(self.ctrl)
         cv2.imshow('ctrl',np.uint8(self.ctrl))
-        self.ctrl=controller.control(self.im,self.flow)
-        self.im=controller.control(self.im,self.flow)
+        #self.ctrl=controller.control(self.im,self.flow)
+        #self.im=controller.control(self.im,self.flow)
+        self.ctrl=controller.interp(self.im,self.flow)
+        self.im=controller.interp(self.im,self.flow)
         self.finders=[]
         for support in self.supports:
             h=patch_finder.hooder(self.sample,support,self.lamb_m,self.ctrl)

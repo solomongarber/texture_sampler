@@ -35,9 +35,10 @@ def interp(pic,flow):
     dl=pic[d,l,:]
     dr=pic[d,r,:]
 
-    udl=ul*udiffs+dl*(1-udiffs)
-    udr=ur*udiffs+dr*(1-udiffs)
+
+    udl=ul*(1-udiffs)+dl*udiffs
+    udr=ur*(1-udiffs)+dr*udiffs
     ans=np.zeros(pic.shape)
-    ans[ys,xs,:]=udl*ldiffs+udr*(1-ldiffs)
+    ans[ys,xs,:]=udl*(1-ldiffs)+udr*ldiffs
     return ans
     
