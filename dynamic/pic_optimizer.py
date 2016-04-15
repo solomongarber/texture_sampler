@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
-import patch_finder
+#import patch_finder
+import tree_finder
 import controller
 
 
@@ -70,8 +71,9 @@ class picturer:
             self.ind_shapes.append(ind_shape)
             self.bitmaps.append(np.ones(ind_shape,dtype=np.uint8))
             self.indices.append(np.arange(support*support))
-            
-            self.finders.append(patch_finder.hooder(sample,support,lamb_m,self.ctrl))
+
+            self.finders.append(tree_finder.Tree(sample,support))
+            #self.finders.append(patch_finder.hooder(sample,support,lamb_m,self.ctrl))
             goose=cv2.getGaussianKernel(support,support/3)
             kern=np.dot(goose,goose.T)
             weigh=np.zeros((support,support,3),dtype=np.float)
@@ -215,7 +217,7 @@ class picturer:
         #self.im=controller.control(self.im,self.flow)
         self.ctrl=controller.interp(self.im,self.flow)
         self.im=controller.interp(self.im,self.flow)
-        self.finders=[]
-        for support in self.supports:
-            h=patch_finder.hooder(self.sample,support,self.lamb_m,self.ctrl)
-            self.finders.append(h)
+        #self.finders=[]
+        #for support in self.supports:
+        #    h=patch_finder.hooder(self.sample,support,self.lamb_m,self.ctrl)
+        #    self.finders.append(h)
