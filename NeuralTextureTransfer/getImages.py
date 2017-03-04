@@ -1,14 +1,14 @@
 import cv2
 import random
 import constants
+import glob
 
 
 def get_images():
     # for each category
     for category in constants.CATEGORIES:
-        for i in range(6):
+        for video_name in glob.glob(category + '*.mp4'):
             # get video name (e.g. water2.mp4)
-            video_name = category + str(i) + '.mp4'
             print('Processing: ' + video_name)
             process_video(video_name)
 
@@ -26,10 +26,14 @@ def process_video(video_name):
     while ret:
         if i % constants.FRAMES_TO_WAIT == 0:
             for k in range(constants.IMAGES_PER_FRAME):
-                # save several images from frame to local directory
                 random_image = get_random_image(frame)
                 file_name = video_name.replace('.mp4', '') + '_' + str(j) + '.png'
-                cv2.imwrite(file_name, random_image)
+                if k % constants.TRAIN_TO_TEST_RATIO == 0:
+                    # save to test
+                    cv2.imwrite(constants.IMAGE_DIRECTORY + file_name, random_image)
+                else:
+                    # save to train
+                    cv2.imwrite(constants.TEST_DIRECTORY + file_name, random_image)
             j += 1
         i += 1
         ret, frame = video_cap.read()
