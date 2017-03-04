@@ -2,7 +2,6 @@ import scipy.misc
 import numpy as np
 import math
 import tensorflow as tf
-import helpful_functions
 import constants
 import cv2
 import glob
@@ -74,50 +73,31 @@ class convnet(object):
     def load_training_data(self):
         self.images = np.empty([constants.NUM_IMAGES,constants.IMAGE_SIZE,constants.IMAGE_SIZE,3])
         self.labels = np.zeros([constants.NUM_IMAGES,constants.NUM_CATEGORIES])
+        self.test_images = np.empty([constants.NUM_TEST_IMAGES, constants.IMAGE_SIZE, constants.IMAGE_SIZE, 3])
+        self.test_labels = np.zeros([constants.NUM_TEST_IMAGES, constants.NUM_CATEGORIES])
 
         # LOAD IN IMAGES AND CORRESPONDING LABELS
         print('Loading png images from ' + constants.IMAGE_DIRECTORY)
-        labels, imgs = [], []
-        dct = {}
+
+        im_num = 0
+        category_num = 0
         for category in constants.CATEGORIES:
             fnames = glob.glob(constants.IMAGE_DIRECTORY + category + '*.png')
             for fname in fnames:
-                label = category
-                if label not in dct.keys():
-                    ln = len(dct.keys())
-                    dct[label] = ln + 1
-                idx = dct[label]
+                self.images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
+                self.labels[im_num, category_num] = 1
+                im_num += 1
+            category_num += 1
 
-                im = cv2.imread(fname)
-                imgs.append(im)
-                labels.append(idx)
-
-        imgs = np.array(imgs)
-        labels = np.array(labels)
-
-        # NICK'S ORIGINAL CODE
-        for i in range(1, 6):
-            data_file = "cifar-10-batches-py/data_batch_" + str(i)
-            data = self.unpickle(data_file)
-            # labels is a list of 0-9 values saying which class each sample is
-            batch_labels = data['labels']
-
-            # images start as a bunch of 3072-size vectors, we need to reshape them into 32x32x3 images
-            # the order the data is stored in results in 3x32x32 tensors, so we need to use transpose to shuffle the dimensions
-            batch_images = data['data'].reshape((-1, 3, 32, 32))
-            batch_images = batch_images.transpose([0, 2, 3, 1])
-            # divide by 256 to normalize the data to [0,1]
-            self.images[10000 * (i - 1):10000 * i, :, :, :] = batch_images / 128.0 - 1
-            # instead of 0-9, we want one-hot vectors, so a label of '3' becomes (0,0,0,1,0,0,0,0,0,0)
-            self.labels[np.arange(10000 * (i - 1), 10000 * i), batch_labels] = 1
-
-            # same deal to load in test data
-        test_data_file = "cifar-10-batches-py/test_batch"
-        test_data = self.unpickle(test_data_file)
-        self.test_labels = np.zeros([10000, 10])
-        self.test_labels[np.arange(10000), test_data['labels']] = 1
-        self.test_images = test_data['data'].reshape((-1, 3, 32, 32))
-        self.test_images = self.test_images.transpose([0, 2, 3, 1]) / 128.0 - 1
+        im_num = 0
+        category_num = 0
+        for category in constants.CATEGORIES:
+            fnames = glob.glob(constants.TEST_DIRECTORY + category + '*.png')
+            for fname in fnames:
+                self.test_images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
+                self.test_labels[im_num, category_num] = 1
+                im_num += 1
+            category_num += 1
 
 
     #fetch a batch of training data, index tells us which batch we're getting

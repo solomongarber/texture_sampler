@@ -28,10 +28,10 @@ def load_data():
     labels = numpy.array(labels)
     return imgs, labels
 
-def get_num_images():
+def get_num_images(directory):
     total = 0
     for category in constants.CATEGORIES:
-        fnames = glob.glob(constants.IMAGE_DIRECTORY + category + '*.png')
+        fnames = glob.glob(directory + category + '*.png')
         total += len(fnames)
     return total
 
