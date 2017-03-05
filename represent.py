@@ -13,7 +13,6 @@ def rep_cols(im,cols,split):
     pos[:,:]=pos[:,:]*cols[0]
     neg=bias*(np.dstack((neg,neg,neg)))
     neg[:,:]=neg[:,:]*cols[1]
-    #middle=neg_cap*bias
     ans[:,:,:]=np.uint8(pos+neg)
     cv2.imshow('ans',ans)
     return ans

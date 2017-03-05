@@ -184,6 +184,8 @@ class Tree:
 def EM(self,thresh,pnum):
     acc=thresh+10
     while acc>thresh:
-        acc=thresh-1
+        acc=self.maximization(pnum)
+        self.expectation()
+        
 
 
