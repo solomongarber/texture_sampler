@@ -161,8 +161,8 @@ class picturer:
             #wtplier[x_off:x_off+support,y_off:y_off+support,:]+=lamda*np.int32(block2>0)
         wtplier[wtplier==0]=1
         ans=ans/wtplier
-        cv2.destroyAllWindows()
-        cv2.imshow('ans',np.uint8(ans))
+        #cv2.destroyAllWindows()
+        #cv2.imshow('ans',np.uint8(ans))
         self.im[ans>0]=ans[ans>0]
 
 
@@ -210,7 +210,7 @@ class picturer:
 
     def update_controls(self):
         print np.max(self.ctrl)
-        cv2.imshow('ctrl',np.uint8(self.ctrl))
+        #cv2.imshow('ctrl',np.uint8(self.ctrl))
         self.ctrl=controller.control(self.im,self.flow)
         self.im=controller.control(self.im,self.flow)
         self.finders=[]
