@@ -6,9 +6,10 @@ import pic_optimizer
 #sample=cv2.imread('../msamp.png')
 #synth=cv2.imread('../img/newmossge1.png')
 
-sample=cv2.imread('../msamp.png')
+#sample=cv2.imread('../msamp.png')
+sample=cv2.imread('../img/bigmosseed.png')
 synth=cv2.imread('../img/faceb.jpg')
-synth=synth[77:477,250:750,:]
+synth=synth[77:577,250:750,:]
 x=synth.shape[1]
 y=synth.shape[0]
 
@@ -28,10 +29,10 @@ flow=np.zeros((sz[0],sz[1],2),dtype=np.int32)
 #flow=np.int32((flow/magz)%x)
 lambm=2
 lambe=1
-supports=[16,8]
+supports=[32,16,8]
 opt=pic_optimizer.picturer(im,flow,supports,sample,lambe,lambm,2,20)
 
 
 
 opt.optimize(20)
-cv2.imwrite('facebtrans.png',np.uint8(opt.im))
+cv2.imwrite('facebtrans-gitsq-bigseed.png',np.uint8(opt.im))
