@@ -1,8 +1,8 @@
 import helpful_functions
 
 CATEGORIES = ['anemone', 'branches', 'flags', 'flowers', 'grass', 'smoke', 'water']
-IMAGE_DIRECTORY = './../../../media/hdd/ben/dyntex_train_images/'
-TEST_DIRECTORY = './../../../media/hdd/ben/dyntex_test_images/'
+IMAGE_DIRECTORY = '/media/hdd/ben/dyntex_train_images/'
+TEST_DIRECTORY = '/media/hdd/ben/dyntex_test_images/'
 FRAMES_TO_WAIT = 10
 IMAGE_SIZE = 128
 IMAGES_PER_FRAME = 50
