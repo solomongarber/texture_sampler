@@ -20,9 +20,9 @@ def process_video(video_name):
         ret, frame = video_cap.read()
     else:
         ret = False
-    # while there's another frame
     i = 0
     j = 0
+    # while there's another frame
     while ret:
         if i % constants.FRAMES_TO_WAIT == 0:
             for k in range(constants.IMAGES_PER_FRAME):
@@ -30,11 +30,12 @@ def process_video(video_name):
                 file_name = video_name.replace('.mp4', '') + '_' + str(j) + '.png'
                 if k % constants.TRAIN_TO_TEST_RATIO == 0:
                     # save to test
-                    cv2.imwrite(constants.IMAGE_DIRECTORY + file_name, random_image)
+                    cv2.imwrite(constants.TEST_DIRECTORY + file_name, random_image)
                 else:
                     # save to train
-                    cv2.imwrite(constants.TEST_DIRECTORY + file_name, random_image)
-            j += 1
+
+                    cv2.imwrite(constants.IMAGE_DIRECTORY + file_name, random_image)
+                j += 1
         i += 1
         ret, frame = video_cap.read()
     video_cap.release()
