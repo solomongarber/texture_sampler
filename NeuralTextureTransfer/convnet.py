@@ -60,7 +60,7 @@ class convnet(object):
 
 
     def build_loss(self):
-        self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.out, labels=self.batch_labels))
+        self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.out, self.batch_labels))
         correct_prediction = tf.equal(tf.argmax(self.out,1), tf.argmax(self.batch_labels,1))
         self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
@@ -80,15 +80,16 @@ class convnet(object):
         #print('Loading png images from ' + constants.IMAGE_DIRECTORY)
 
         #im_num = 0
-        #category_num = 0
+        category_num = 0
         fnames=[]
         iminds=[]
-        cumsum=0
         for category in constants.CATEGORIES:
             catnames = glob.glob(constants.IMAGE_DIRECTORY + category + '*.png')
-            cumsum+=len(catnames)
-            iminds.append(cumsum)
+            #iminds.append(cumsum)
+            iminds+=[category_num for name in catnames]
             fnames+=catnames
+            category_num+=1
+            
             #for fname in fnames:
             #    self.images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
             #    self.labels[im_num, category_num] = 1
@@ -98,15 +99,16 @@ class convnet(object):
         self.im_names=fnames
         self.im_inds=iminds
         #im_num = 0
-        #category_num = 0
+        category_num = 0
         test_names=[]
         test_inds=[]
-        cumsum=0
+        #cumsum=0
         for category in constants.CATEGORIES:
             catnames = glob.glob(constants.TEST_DIRECTORY + category + '*.png')
-            cumsum+=len(catnames)
-            test_inds.append(cumsum)
+            #iminds.append(cumsum)
+            test_inds+=[category_num for name in catnames]
             test_names+=catnames
+            category_num+=1
             #for fname in fnames:
             #    self.test_images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
             #    self.test_labels[im_num, category_num] = 1
@@ -151,9 +153,9 @@ class convnet(object):
     #to shuffle the labels and the samples in the same way, or else we'll just have nonsense
     def shuffle_data(self):
         rng_state = np.random.get_state()
-        np.random.shuffle(self.images)
+        np.random.shuffle(self.im_names)
         np.random.set_state(rng_state)
-        np.random.shuffle(self.labels)
+        np.random.shuffle(self.im_inds)
 
 
     def save_activations(self,name,count,sess,batch_images):
