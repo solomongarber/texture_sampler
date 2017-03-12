@@ -60,7 +60,7 @@ class convnet(object):
 
 
     def build_loss(self):
-        self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.out, self.batch_labels))
+        self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.out, labels=self.batch_labels))
         correct_prediction = tf.equal(tf.argmax(self.out,1), tf.argmax(self.batch_labels,1))
         self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
