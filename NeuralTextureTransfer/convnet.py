@@ -56,7 +56,7 @@ class convnet(object):
         self.layer_map['h2'] = self.h2_pool
         self.h2_flat = tf.reshape(self.h2_pool,[-1,result_dim*result_dim*f2])
         self.fc_layer = tf.nn.dropout(self.fc(self.h2_flat,result_dim*result_dim*f2,1024,tf.nn.relu),keep_prob=self.kp)
-        self.out = self.fc(self.fc_layer,1024,10,tf.identity)
+        self.out = self.fc(self.fc_layer,1024,contstans.NUM_CATEGORIES,tf.identity)
 
 
     def build_loss(self):
