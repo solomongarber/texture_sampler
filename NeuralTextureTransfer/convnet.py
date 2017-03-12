@@ -88,7 +88,7 @@ class convnet(object):
             catnames = glob.glob(constants.IMAGE_DIRECTORY + category + '*.png')
             cumsum+=len(catnames)
             iminds.append(cumsum)
-            fnames.append(catnames)
+            fnames+=catnames
             #for fname in fnames:
             #    self.images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
             #    self.labels[im_num, category_num] = 1
@@ -106,7 +106,7 @@ class convnet(object):
             catnames = glob.glob(constants.TEST_DIRECTORY + category + '*.png')
             cumsum+=len(catnames)
             test_inds.append(cumsum)
-            test_names.append(catnames)
+            test_names+=catnames
             #for fname in fnames:
             #    self.test_images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
             #    self.test_labels[im_num, category_num] = 1
