@@ -112,8 +112,8 @@ class convnet(object):
             #    self.test_labels[im_num, category_num] = 1
             #    im_num += 1
             #category_num += 1
-    self.test_inds=test_inds
-    self.test_names=test_names
+        self.test_inds=test_inds
+        self.test_names=test_names
 
     #fetch a batch of training data, index tells us which batch we're getting
     def get_batch(self,index):
