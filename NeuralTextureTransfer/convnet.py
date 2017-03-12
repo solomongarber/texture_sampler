@@ -71,41 +71,80 @@ class convnet(object):
 
     #load up the cifar-10 training data and test data, both images and labels
     def load_training_data(self):
-        self.images = np.empty([constants.NUM_IMAGES,constants.IMAGE_SIZE,constants.IMAGE_SIZE,3])
-        self.labels = np.zeros([constants.NUM_IMAGES,constants.NUM_CATEGORIES])
-        self.test_images = np.empty([constants.NUM_TEST_IMAGES, constants.IMAGE_SIZE, constants.IMAGE_SIZE, 3])
-        self.test_labels = np.zeros([constants.NUM_TEST_IMAGES, constants.NUM_CATEGORIES])
+        #self.images = np.empty([constants.NUM_IMAGES,constants.IMAGE_SIZE,constants.IMAGE_SIZE,3])
+        #self.labels = np.zeros([constants.NUM_IMAGES,constants.NUM_CATEGORIES])
+        #self.test_images = np.empty([constants.NUM_TEST_IMAGES, constants.IMAGE_SIZE, constants.IMAGE_SIZE, 3])
+        #self.test_labels = np.zeros([constants.NUM_TEST_IMAGES, constants.NUM_CATEGORIES])
 
         # LOAD IN IMAGES AND CORRESPONDING LABELS
-        print('Loading png images from ' + constants.IMAGE_DIRECTORY)
+        #print('Loading png images from ' + constants.IMAGE_DIRECTORY)
 
-        im_num = 0
-        category_num = 0
+        #im_num = 0
+        #category_num = 0
+        fnames=[]
+        iminds=[]
+        cumsum=0
         for category in constants.CATEGORIES:
-            fnames = glob.glob(constants.IMAGE_DIRECTORY + category + '*.png')
-            for fname in fnames:
-                self.images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
-                self.labels[im_num, category_num] = 1
-                im_num += 1
-            category_num += 1
+            catnames = glob.glob(constants.IMAGE_DIRECTORY + category + '*.png')
+            cumsum+=len(catnames)
+            iminds.append(cumsum)
+            fnames.append(catnames)
+            #for fname in fnames:
+            #    self.images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
+            #    self.labels[im_num, category_num] = 1
+            #    im_num += 1
+            #category_num += 1
 
-        im_num = 0
-        category_num = 0
+        self.im_names=fnames
+        self.im_inds=iminds
+        #im_num = 0
+        #category_num = 0
+        test_names=[]
+        test_inds=[]
+        cumsum=0
         for category in constants.CATEGORIES:
-            fnames = glob.glob(constants.TEST_DIRECTORY + category + '*.png')
-            for fname in fnames:
-                self.test_images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
-                self.test_labels[im_num, category_num] = 1
-                im_num += 1
-            category_num += 1
-
+            catnames = glob.glob(constants.TEST_DIRECTORY + category + '*.png')
+            cumsum+=len(catnames)
+            test_inds.append(cumsum)
+            test_names.append(catnames)
+            #for fname in fnames:
+            #    self.test_images[im_num, :, :, :] = np.float32(cv2.imread(fname)) / 128.0 - 1
+            #    self.test_labels[im_num, category_num] = 1
+            #    im_num += 1
+            #category_num += 1
+    self.test_inds=test_inds
+    self.test_names=test_names
 
     #fetch a batch of training data, index tells us which batch we're getting
     def get_batch(self,index):
-        batch_images = self.images[self.batch_size*index:self.batch_size*(index+1),:,:,:]
-        batch_labels = self.labels[self.batch_size*index:self.batch_size*(index+1),:]
+        batch_images = np.empty([self.batch_size,constants.IMAGE_SIZE,constants.IMAGE_SIZE,3])
+        batch_labels = np.zeros([self.batch_size,constants.NUM_CATEGORIES])
+        #self.images[self.batch_size*index:self.batch_size*(index+1),:,:,:]
+        #batch_labels = self.labels[self.batch_size*index:self.batch_size*(index+1),:]
+        cat=0
+        while index*self.batch_size>self.im_inds[cat]:
+            cat+=1
+        for i in range(self.batch_size):
+            if (index*self.batch_size+i)>self.im_inds[cat]:
+                cat+=1
+            name=self.im_names[index*self.batch_size+i]
+            batch_images[i,:,:,:]=np.float32(cv2.imread(name))/128.0-1
         return batch_images,batch_labels
 
+    def get_test_batch(self,index):
+        batch_images = np.empty([self.batch_size,constants.IMAGE_SIZE,constants.IMAGE_SIZE,3])
+        batch_labels = np.zeros([self.batch_size,constants.NUM_CATEGORIES])
+        #self.images[self.batch_size*index:self.batch_size*(index+1),:,:,:]
+        #batch_labels = self.labels[self.batch_size*index:self.batch_size*(index+1),:]
+        cat=0
+        while index*self.batch_size>self.test_inds[cat]:
+            cat+=1
+        for i in range(self.batch_size):
+            if (index*self.batch_size+i)>self.test_inds[cat]:
+                cat+=1
+            name=self.test_names[index*self.batch_size+i]
+            batch_images[i,:,:,:]=np.float32(cv2.imread(name))/128.0-1
+        return batch_images,batch_labels
 
     #http://stackoverflow.com/questions/4601373/better-way-to-shuffle-two-numpy-arrays-in-unison
     #We want to randomize the order of the training data in each epoch, but we have to be careful
@@ -184,11 +223,16 @@ class convnet(object):
                 batch_images,batch_labels = self.get_batch(batch_index)
                 _,loss,output = sess.run([self.train_op,self.loss,self.out],feed_dict={self.input_images: batch_images,self.batch_labels: batch_labels,self.kp: 0.5})
                 count+=1
-                if(count%100==0):
+                if(count%150==0):
                     self.save_filters('h0',count,sess)
                     self.save_activations('h0',count,sess,sample_batch)
                     self.save_activations('h1',count,sess,sample_batch)
-                    accuracy= sess.run(self.accuracy,feed_dict={self.input_images: self.test_images,self.batch_labels: self.test_labels,self.kp: 1})
+                    num_test_batches=constatns.NUM_VALIDATION_IMAGES
+                    accuracy=0.0
+                    for test_batch_index in range(num_test_batches):
+                        test_batch,test_labels=self.get_test_batch(test_batch_index)
+                        batch_accuracy= sess.run(self.accuracy,feed_dict={self.input_images: self.test_images,self.batch_labels: self.test_labels,self.kp: 1})
+                        accuracy+=batch_accuracy/num_test_batches
                     print("Epoch {:3d}, batch {:3d} - Accuracy={:0.4f} Batch_Loss={:0.4f}".format(ep,batch_index,accuracy,loss))
 
 
