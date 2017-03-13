@@ -123,14 +123,11 @@ class convnet(object):
         batch_labels = np.zeros([self.batch_size,constants.NUM_CATEGORIES])
         #self.images[self.batch_size*index:self.batch_size*(index+1),:,:,:]
         #batch_labels = self.labels[self.batch_size*index:self.batch_size*(index+1),:]
-        cat=0
-        while index*self.batch_size>self.im_inds[cat]:
-            cat+=1
+        
         for i in range(self.batch_size):
-            if (index*self.batch_size+i)>self.im_inds[cat]:
-                cat+=1
             name=self.im_names[index*self.batch_size+i]
             batch_images[i,:,:,:]=np.float32(cv2.imread(name))/128.0-1
+            batch_labels[i,self.im_inds[index*self.batch_size+i]]=1
         return batch_images,batch_labels
 
     def get_test_batch(self,index):
@@ -138,14 +135,10 @@ class convnet(object):
         batch_labels = np.zeros([self.batch_size,constants.NUM_CATEGORIES])
         #self.images[self.batch_size*index:self.batch_size*(index+1),:,:,:]
         #batch_labels = self.labels[self.batch_size*index:self.batch_size*(index+1),:]
-        cat=0
-        while index*self.batch_size>self.test_inds[cat]:
-            cat+=1
         for i in range(self.batch_size):
-            if (index*self.batch_size+i)>self.test_inds[cat]:
-                cat+=1
             name=self.test_names[index*self.batch_size+i]
             batch_images[i,:,:,:]=np.float32(cv2.imread(name))/128.0-1
+            batch_labels[i,self.test_inds[index*self.batch_size+i]]=1
         return batch_images,batch_labels
 
     #http://stackoverflow.com/questions/4601373/better-way-to-shuffle-two-numpy-arrays-in-unison
