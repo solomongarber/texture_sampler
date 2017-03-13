@@ -218,9 +218,9 @@ class convnet(object):
                 batch_images,batch_labels = self.get_batch(batch_index)
                 _,loss,output = sess.run([self.train_op,self.loss,self.out],feed_dict={self.input_images: batch_images,self.batch_labels: batch_labels,self.kp: 0.5})
                 count+=1
-                if(count%10==0 and count<1000):
+                if(count%10==0 and count<150):
                     print ("count = "+str(count))
-                if(count%150==0):
+                if(count%1000==0):
                     print ("Starting Validation")
                     self.save_filters('h0',count,sess)
                     #self.save_activations('h0',count,sess,sample_batch)
