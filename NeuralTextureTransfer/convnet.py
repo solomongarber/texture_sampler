@@ -220,12 +220,12 @@ class convnet(object):
                 count+=1
                 if(count%10==0 and count<150):
                     print ("count = "+str(count))
-                if(count%1000==0):
+                if(count%10==0):
                     print ("Starting Validation")
                     self.save_filters('h0',count,sess)
                     #self.save_activations('h0',count,sess,sample_batch)
                     #self.save_activations('h1',count,sess,sample_batch)
-                    num_test_batches=constants.NUM_VALIDATION_IMAGES
+                    num_test_batches=constants.NUM_VALIDATION_IMAGES//self.batch_size
                     accuracy=0.0
                     for test_batch_index in range(num_test_batches):
                         if (test_batch_index%25==0):
