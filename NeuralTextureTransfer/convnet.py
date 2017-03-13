@@ -218,18 +218,16 @@ class convnet(object):
                 batch_images,batch_labels = self.get_batch(batch_index)
                 _,loss,output = sess.run([self.train_op,self.loss,self.out],feed_dict={self.input_images: batch_images,self.batch_labels: batch_labels,self.kp: 0.5})
                 count+=1
-                if count%10==0 and count < 150:
-                    print('You have reached a count of ' + str(count))
+                
                 if(count%150==0):
-                    print('Start validation...')
                     self.save_filters('h0',count,sess)
-                    #self.save_activations('h0',count,sess,sample_batch)
-                    #self.save_activations('h1',count,sess,sample_batch)
-                    num_test_batches=constants.NUM_VALIDATION_IMAGES
+                    self.save_activations('h0',count,sess,sample_batch)
+                    self.save_activations('h1',count,sess,sample_batch)
+                    num_test_batches=constatns.NUM_VALIDATION_IMAGES
                     accuracy=0.0
                     for test_batch_index in range(num_test_batches):
                         test_batch,test_labels=self.get_test_batch(test_batch_index)
-                        batch_accuracy= sess.run(self.accuracy,feed_dict={self.input_images: self.test_images,self.batch_labels: self.test_labels,self.kp: 1})
+                        batch_accuracy= sess.run(self.accuracy,feed_dict={self.input_images: test_batch,self.batch_labels: test_labels,self.kp: 1})
                         accuracy+=batch_accuracy/num_test_batches
                     print("Epoch {:3d}, batch {:3d} - Accuracy={:0.4f} Batch_Loss={:0.4f}".format(ep,batch_index,accuracy,loss))
 
