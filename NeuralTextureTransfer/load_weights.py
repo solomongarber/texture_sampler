@@ -217,13 +217,13 @@ class convnet(object):
         for ep in range(epochs):
             self.shuffle_data()
             num_batches = constants.NUM_IMAGES//self.batch_size
-            for batch_index in range(11):
+            for batch_index in range(5):
                 batch_images,batch_labels = self.get_batch(batch_index)
                 _,loss,output = sess.run([self.train_op,self.loss,self.out],feed_dict={self.input_images: batch_images,self.batch_labels: batch_labels,self.kp: 0.5})
                 count+=1
                 if(count%10==0 and count<150):
                     print ("count = "+str(count))
-                    '''
+                '''
                 if(count%1000==0):
                     print ("Starting Validation")
                     self.save_filters('h0',count,sess)
@@ -238,16 +238,11 @@ class convnet(object):
                         batch_accuracy= sess.run(self.accuracy,feed_dict={self.input_images: test_batch,self.batch_labels: test_labels,self.kp: 1})
                         accuracy+=batch_accuracy/num_test_batches
                     print("Epoch {:3d}, batch {:3d} - Accuracy={:0.4f} Batch_Loss={:0.4f}".format(ep,batch_index,accuracy,loss))
-                    '''
-        self.save_filters('h0', count, sess)
-
+                '''
 with tf.Session() as sess:
     network = convnet(first_layer_filters=64,filter_growth_factor=2)
     #saver = tf.train.Saver()
-    sess.run(tf.initialize_all_variables())
     network.build()
-    network.load_training_data()
-    network.build_loss()
-    network.build_train_op()
-    network.train(1,sess)
-    network.save(sess, constants.MODEL_PATH + '/model') 
+    sess.run(tf.initialize_all_variables())
+    network.saver.restore(sess, constants.MODEL_PATH + 'model')
+    network.save_filters('h0', 133, sess)
