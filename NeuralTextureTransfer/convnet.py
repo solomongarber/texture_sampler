@@ -20,7 +20,10 @@ class convnet(object):
         self.kp = tf.placeholder(tf.float32)
         self.filter_map = {}
         self.layer_map = {}
+        self.saver=tf.train.Saver()
 
+    def save(self,sess,path):
+        self.saver.save(sess,path)
 
     def conv2d(self,input,in_channels,out_channels,name='NONE',non_linearity=tf.nn.relu):
         filters = tf.Variable(tf.truncated_normal([self.filter_size,self.filter_size,in_channels,out_channels],stddev=0.01))
@@ -238,11 +241,11 @@ class convnet(object):
 
 with tf.Session() as sess:
     network = convnet(first_layer_filters=64,filter_growth_factor=2)
-    saver = tf.train.Saver()
+    #saver = tf.train.Saver()
     sess.run(tf.initialize_all_variables())
     network.build()
     network.load_training_data()
     network.build_loss()
     network.build_train_op()
     network.train(50,sess)
-    saver.save(sess, constants.MODEL_PATH + '/model') 
+    network.save(sess, constants.MODEL_PATH + '/model') 
