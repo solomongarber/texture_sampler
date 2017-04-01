@@ -237,9 +237,9 @@ class convnet(object):
 
 
 with tf.Session() as sess:
+    network = convnet(first_layer_filters=64,filter_growth_factor=2)
     saver = tf.train.Saver()
     sess.run(tf.initialize_all_variables())
-    network = convnet(first_layer_filters=64,filter_growth_factor=2)
     network.build()
     network.load_training_data()
     network.build_loss()
