@@ -20,7 +20,7 @@ class convnet(object):
         self.kp = tf.placeholder(tf.float32)
         self.filter_map = {}
         self.layer_map = {}
-        self.saver=tf.train.Saver()
+
 
     def save(self,sess,path):
         self.saver.save(sess,path)
@@ -60,7 +60,7 @@ class convnet(object):
         self.h2_flat = tf.reshape(self.h2_pool,[-1,result_dim*result_dim*f2])
         self.fc_layer = tf.nn.dropout(self.fc(self.h2_flat,result_dim*result_dim*f2,1024,tf.nn.relu),keep_prob=self.kp)
         self.out = self.fc(self.fc_layer,1024,constants.NUM_CATEGORIES,tf.identity)
-
+        self.saver = tf.train.Saver()
 
     def build_loss(self):
         self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.out, labels=self.batch_labels))
